@@ -1,69 +1,94 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { ConfigAppSDK } from '@contentful/app-sdk';
-import { Heading, Form, Paragraph, Flex } from '@contentful/f36-components';
-import { css } from 'emotion';
-import { /* useCMA, */ useSDK } from '@contentful/react-apps-toolkit';
+import type { ConfigAppSDK } from '@contentful/app-sdk'
+import { Form, Heading } from '@contentful/f36-components'
+import { Workbench } from '@contentful/f36-workbench'
+import { useSDK } from '@contentful/react-apps-toolkit'
+import { useCallback, useEffect, useState } from 'react'
 
-export interface AppInstallationParameters {}
+import FormInput from '../components/FormInput'
+import type { Credentials, Input } from '../types'
+import { validateParameters } from '../utils'
+
+const inputs: Input[] = [
+  {
+    label: 'API key',
+    id: 'apiKey',
+    helpText: 'The API key of the Upstart API.',
+  },
+  {
+    label: 'Site ID',
+    id: 'siteId',
+    helpText: 'The Site ID of the Upstart API.',
+  },
+  {
+    label: 'Tenant ID',
+    id: 'tenantId',
+    helpText: 'The Tenant ID of the Upstart API.',
+  },
+]
 
 const ConfigScreen = () => {
-  const [parameters, setParameters] = useState<AppInstallationParameters>({});
-  const sdk = useSDK<ConfigAppSDK>();
-  /*
-     To use the cma, inject it as follows.
-     If it is not needed, you can remove the next line.
-  */
-  // const cma = useCMA();
+  const [parameters, setParameters] = useState<Credentials>({
+    apiKey: '',
+    siteId: '',
+    tenantId: '',
+  })
+
+  const sdk = useSDK<ConfigAppSDK>()
 
   const onConfigure = useCallback(async () => {
-    // This method will be called when a user clicks on "Install"
-    // or "Save" in the configuration screen.
-    // for more details see https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-reference/#register-an-app-configuration-hook
+    const currentState = await sdk.app.getCurrentState()
 
-    // Get current the state of EditorInterface and other entities
-    // related to this app installation
-    const currentState = await sdk.app.getCurrentState();
+    const error = validateParameters(parameters)
+    if (error != null) {
+      sdk.notifier.error(error)
+      return false
+    }
 
     return {
-      // Parameters to be persisted as the app configuration.
       parameters,
-      // In case you don't want to submit any update to app
-      // locations, you can just pass the currentState as is
       targetState: currentState,
-    };
-  }, [parameters, sdk]);
+    }
+  }, [parameters, sdk])
+
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setParameters({
+      ...parameters,
+      [e.currentTarget.id]: e.currentTarget.value,
+    })
+  }
 
   useEffect(() => {
-    // `onConfigure` allows to configure a callback to be
-    // invoked when a user attempts to install the app or update
-    // its configuration.
-    sdk.app.onConfigure(() => onConfigure());
-  }, [sdk, onConfigure]);
+    sdk.app.onConfigure(onConfigure)
+  }, [sdk, onConfigure])
 
   useEffect(() => {
-    (async () => {
-      // Get current parameters of the app.
-      // If the app is not installed yet, `parameters` will be `null`.
-      const currentParameters: AppInstallationParameters | null = await sdk.app.getParameters();
+    ;(async () => {
+      const currentParameters: Credentials | null = await sdk.app.getParameters()
 
       if (currentParameters) {
-        setParameters(currentParameters);
+        setParameters(currentParameters)
       }
 
-      // Once preparation has finished, call `setReady` to hide
-      // the loading screen and present the app to a user.
-      sdk.app.setReady();
-    })();
-  }, [sdk]);
+      sdk.app.setReady()
+    })()
+  }, [sdk])
 
   return (
-    <Flex flexDirection="column" className={css({ margin: '80px', maxWidth: '800px' })}>
+    <Workbench.Content>
       <Form>
-        <Heading>App Config</Heading>
-        <Paragraph>Welcome to your contentful app. This is your config page.</Paragraph>
+        <Heading>App configuration</Heading>
+        {inputs.map((input) => (
+          <FormInput
+            key={input.id}
+            input={input}
+            value={parameters[input.id]}
+            isInvalid={!parameters[input.id].length}
+            onInputChange={onInputChange}
+          />
+        ))}
       </Form>
-    </Flex>
-  );
-};
+    </Workbench.Content>
+  )
+}
 
-export default ConfigScreen;
+export default ConfigScreen

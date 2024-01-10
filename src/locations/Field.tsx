@@ -1,187 +1,130 @@
-import React, { useCallback, useEffect, useState } from "react";
+import type { FieldAppSDK } from '@contentful/app-sdk'
 import {
-  Paragraph,
+  Box,
   Button,
-  ModalConfirm,
+  Card,
+  EntityList,
+  Paragraph,
+  SkeletonBodyText,
+  SkeletonContainer,
+  SkeletonImage,
+  Stack,
   Text,
-  Flex,
-  Checkbox,
-} from "@contentful/f36-components";
-import { DialogAppSDK, FieldAppSDK } from "@contentful/app-sdk";
-import { /* useCMA, */ useSDK } from "@contentful/react-apps-toolkit";
+} from '@contentful/f36-components'
+import tokens from '@contentful/f36-tokens'
+import { useSDK } from '@contentful/react-apps-toolkit'
+import { css } from 'emotion'
+import { useCallback, useEffect, useState } from 'react'
 
-function CheckboxCheckedOrIndeterminateExample() {
-  return (
-    <Flex flexDirection="column">
-      <Checkbox id="checkbox1" name="checked-option-1" defaultChecked>
-        Option 1 (uncontrolled checked)
-      </Checkbox>
-      <Checkbox
-        id="checkbox1"
-        name="controlled-option-2"
-        isChecked
-        onChange={() => {}}
-      >
-        Option 2 (controlled checked)
-      </Checkbox>
-      <Checkbox id="checkbox2" name="indeterminate-option-3" isIndeterminate>
-        Option 3 (indeterminate)
-      </Checkbox>
-    </Flex>
-  );
-}
+import { PRODUCTS_QUANTITY } from '../constants'
+import useProducts from '../hooks/useProducts'
+import type { Credentials, DialogInvocationParameters } from '../types'
 
-type FeaturePreviewProps = {
-  selectedFacets: any;
-};
-const FeaturedProductPreview = (props: FeaturePreviewProps) => {
-  const sdk = useSDK<FieldAppSDK>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [products, setProducts] = useState<Record<string, any>>([]);
-  const { apiKey, siteId, tenant } = sdk.parameters.installation;
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const facets = props.selectedFacets ? Object.keys(props.selectedFacets).reduce((acc, key) => {
-        const facets = props.selectedFacets[key];
-        return acc.concat({
-          terms: {
-            [key]: facets
-          }
-        })
-      }, [] as any[]) : []
-
-      setIsLoading(true);
-
-      const response = await fetch(
-        "https://nochannel-dev-1-api.nochannel-dev.upstart.team/v1/search/routes/catalog_live/search",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            search: {
-              query: {
-                bool: {
-                  filter: null,
-                  must: [
-                    {
-                      bool: {
-                        should: [{ query_string: { query: "*", boost: 1 } }],
-                      },
-                    },
-                    { bool: { should: [{ term: { archived: "false" } }] } },
-                    { bool: { must: facets } },
-                  ],
-                },
-              },
-              from: 0,
-              size: 5,
-              sort: [],
-              aggs: {},
-            },
-            tracking: "slow",
-            parentQueryId: null,
-          }),
-          headers: {
-            "x-upstart-api-key": apiKey,
-            "X-Upstart-Site": siteId,
-            "X-Upstart-Tenant": tenant,
-          },
-        }
-      );
-      return response.json();
-    };
-
-    fetchProducts().then((res) => {
-      setIsLoading(false);
-      const products = res.result.indexes.catalog_live.data.hits.hits.map(p => p._source)
-      ;
-      setProducts(products);
-    });
-  }, [apiKey, siteId, tenant, setProducts]);
-
-  if (!products || products.length === 0) {
-    return (
-      <Button onClick={() => sdk.field.setValue(null)}>Reset Facets</Button>
-    )
-  }
-
-  if (isLoading) {
-    return <Text>Loading facets</Text>
-  }
-
-  return (
-    <ul>
-      {
-        products.map(p => {
-          return <li key={p.id}>{p.name}</li>
-        })
-      }
-    </ul>
-  )
-};
-
-// Featured Product Preview Field
 const Field = () => {
-  const [isShown, setShown] = useState(false);
-  const sdk = useSDK<FieldAppSDK>();
-  const [fieldValue, setFieldValue] = useState(sdk.field.getValue());
-  console.log("Featured Product Preview Field Loaded");
+  const sdk = useSDK<FieldAppSDK>()
+  const defaultValues = {
+    selected: undefined,
+    quantity: PRODUCTS_QUANTITY,
+    title: '',
+  }
+  const [fieldValues, setFieldValues] = useState<DialogInvocationParameters>({
+    ...defaultValues,
+    ...(sdk.field.getValue() as DialogInvocationParameters),
+  })
+
+  const credentials = sdk.parameters.installation as Credentials
+  const { isLoading, products } = useProducts(credentials, {
+    size: fieldValues.quantity,
+    facets: fieldValues.selected,
+  })
 
   const handleDialogOpen = useCallback(async () => {
     const result = await sdk.dialogs.openCurrentApp({
-      position: "center",
-      title: "App Title",
+      position: 'center',
+      title: 'App Title',
       shouldCloseOnOverlayClick: true,
       shouldCloseOnEscapePress: true,
       width: 640,
-      // there is no way for us to figure out the user's browser window height
-      // but Uploadcare File Uploader expects to know it
-      // so to make it work we're setting dialog's height to the max possible
-      // -200px is just an assumption that all the Contentful UI related to dialogs (e.g. headline, cross button, etc)
-      // will fit in 200px
-      minHeight: "calc(100vh - 200px)",
-      parameters: sdk.field.getValue()
-    });
+      minHeight: 'calc(100vh - 200px)',
+      parameters: fieldValues,
+    })
 
-    console.log(result);
-    sdk.field.setValue(result);
-  }, [sdk.dialogs, sdk.field]);
+    if (result) {
+      sdk.field.setValue(result)
+    }
+  }, [sdk.dialogs, sdk.field])
 
   useEffect(() => {
     sdk.field.onValueChanged((val) => {
-      console.log('onchange', val)
-      setFieldValue(val);
+      if (val) {
+        setFieldValues(val)
+      }
     })
   }, [sdk])
 
-  if (sdk.field.type !== "Object") {
-    return <Paragraph>Expected field type: Object</Paragraph>;
-  }
-
-  if (!fieldValue || Object.keys(fieldValue).length === 0) {
-    return (
-      <>
-        <Button onClick={handleDialogOpen}>Select Facets</Button>
-      </>
-    );
+  if (sdk.field.type !== 'Object') {
+    return <Paragraph>Expected field type: Object</Paragraph>
   }
 
   return (
-    <>
-      <Button onClick={handleDialogOpen}>Edit Facets</Button>
-      <FeaturedProductPreview selectedFacets={fieldValue} />
-    </>
-  );
-  /*
-     To use the cma, inject it as follows.
-     If it is not needed, you can remove the next line.
-  */
-  // const cma = useCMA();
-  // If you only want to extend Contentful's default editing experience
-  // reuse Contentful's editor components
-  // -> https://www.contentful.com/developers/docs/extensibility/field-editors/
-  return (
-    <Paragraph>Hello Entry Field Component (AppId: {sdk.ids.app})</Paragraph>
-  );
-};
+    <Box>
+      {isLoading && (
+        <div className={css({ position: 'relative', maxHeight: '50px' })}>
+          <SkeletonContainer>
+            <SkeletonImage height={50} width={50} />
+            <SkeletonBodyText offsetLeft={55} />
+          </SkeletonContainer>
+        </div>
+      )}
+      {!isLoading && fieldValues.selected === undefined && (
+        <Card
+          style={{
+            padding: tokens.spacingXl,
+            border: `1px dashed ${tokens.gray500}`,
+          }}
+        >
+          <Stack
+            style={{ zIndex: tokens.zIndexNotification }}
+            flexDirection="column"
+            alignItems="center"
+          >
+            <Button onClick={handleDialogOpen}>
+              <Stack>
+                <Text fontWeight="fontWeightDemiBold">Select facets</Text>
+              </Stack>
+            </Button>
+          </Stack>
+        </Card>
+      )}
+      {!isLoading && !fieldValues.selected === undefined && Boolean(products.length) && (
+        <Box>
+          <EntityList>
+            {products.map(({ _source }, i) => {
+              const { uri = '', altText = '' } = _source.media
+                ? Object.values(_source.media)[0]
+                : {}
+              return (
+                <EntityList.Item
+                  key={i}
+                  title={_source.name}
+                  thumbnailUrl={uri}
+                  thumbnailAltText={altText}
+                />
+              )
+            })}
+          </EntityList>
+          <Button
+            onClick={handleDialogOpen}
+            style={{
+              marginTop: tokens.spacingXs,
+            }}
+          >
+            Select facets
+          </Button>
+        </Box>
+      )}
+    </Box>
+  )
+}
 
-export default Field;
+export default Field

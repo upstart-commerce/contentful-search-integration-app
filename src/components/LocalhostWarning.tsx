@@ -1,5 +1,5 @@
-import React from 'react';
-import { Paragraph, TextLink, Note, Flex } from '@contentful/f36-components';
+import { Flex, Note, Paragraph, TextLink } from '@contentful/f36-components'
+import React from 'react'
 
 const LocalhostWarning = () => {
   return (
@@ -26,7 +26,7 @@ const LocalhostWarning = () => {
         </Paragraph>
       </Note>
     </Flex>
-  );
-};
+  )
+}
 
-export default LocalhostWarning;
+export default LocalhostWarning

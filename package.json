@@ -1,17 +1,18 @@
 {
-  "name": "featured",
+  "name": "contentful-ecommerce-app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@contentful/app-sdk": "^4.23.1",
-    "@contentful/f36-components": "4.54.0",
-    "@contentful/f36-tokens": "4.0.2",
+    "@contentful/f36-components": "4.57.0",
+    "@contentful/f36-tokens": "4.0.3",
+    "@contentful/f36-workbench": "^4.21.0",
     "@contentful/react-apps-toolkit": "1.2.16",
     "contentful-management": "10.46.4",
     "emotion": "10.0.27",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "start": "cross-env BROWSER=none react-scripts start",
@@ -20,7 +21,10 @@
     "eject": "react-scripts eject",
     "create-app-definition": "contentful-app-scripts create-app-definition",
     "upload": "contentful-app-scripts upload --bundle-dir ./build",
-    "upload-ci": "contentful-app-scripts upload --ci --bundle-dir ./build --organization-id $CONTENTFUL_ORG_ID --definition-id $CONTENTFUL_APP_DEF_ID --token $CONTENTFUL_ACCESS_TOKEN"
+    "upload-ci": "contentful-app-scripts upload --ci --bundle-dir ./build --organization-id $CONTENTFUL_ORG_ID --definition-id $CONTENTFUL_APP_DEF_ID --token $CONTENTFUL_ACCESS_TOKEN",
+    "lint": "eslint src/**/*.{js,jsx,ts,tsx,json}",
+    "lint:fix": "eslint --fix 'src/**/*.{js,jsx,ts,tsx,json}'",
+    "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -38,14 +42,25 @@
     ]
   },
   "devDependencies": {
-    "@contentful/app-scripts": "1.13.0",
+    "@contentful/app-scripts": "1.13.2",
     "@testing-library/jest-dom": "5.17.0",
-    "@testing-library/react": "14.0.0",
+    "@testing-library/react": "14.1.2",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@tsconfig/create-react-app": "2.0.1",
-    "@types/node": "16.18.60",
-    "@types/react": "18.2.34",
-    "@types/react-dom": "18.2.14",
+    "@types/node": "16.18.69",
+    "@types/react": "18.2.46",
+    "@types/react-dom": "18.2.18",
+    "@typescript-eslint/eslint-plugin": "^6.18.0",
+    "@typescript-eslint/parser": "^6.18.0",
     "cross-env": "7.0.3",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prettier": "^5.1.2",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.1.1",
     "typescript": "4.9.5"
   },
   "homepage": "."
