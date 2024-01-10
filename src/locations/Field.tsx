@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Card,
-  EntityList,
   Paragraph,
   SkeletonBodyText,
   SkeletonContainer,
@@ -14,8 +13,10 @@ import {
 import tokens from '@contentful/f36-tokens'
 import { useSDK } from '@contentful/react-apps-toolkit'
 import { css } from 'emotion'
+import isEmpty from 'lodash/isEmpty'
 import { useCallback, useEffect, useState } from 'react'
 
+import FacetsList from '../components/FacetsList'
 import { PRODUCTS_QUANTITY } from '../constants'
 import useProducts from '../hooks/useProducts'
 import type { Credentials, DialogInvocationParameters } from '../types'
@@ -68,15 +69,16 @@ const Field = () => {
 
   return (
     <Box>
-      {isLoading && (
+      {sdk.field.type !== 'Object' ? (
+        <Paragraph>Expected field type: Object</Paragraph>
+      ) : isLoading ? (
         <div className={css({ position: 'relative', maxHeight: '50px' })}>
-          <SkeletonContainer>
+          <SkeletonContainer testId="loading-skeleton">
             <SkeletonImage height={50} width={50} />
             <SkeletonBodyText offsetLeft={55} />
           </SkeletonContainer>
         </div>
-      )}
-      {!isLoading && fieldValues.selected === undefined && (
+      ) : isEmpty(fieldValues.selected) ? (
         <Card
           style={{
             padding: tokens.spacingXl,
@@ -95,24 +97,9 @@ const Field = () => {
             </Button>
           </Stack>
         </Card>
-      )}
-      {!isLoading && !fieldValues.selected === undefined && Boolean(products.length) && (
-        <Box>
-          <EntityList>
-            {products.map(({ _source }, i) => {
-              const { uri = '', altText = '' } = _source.media
-                ? Object.values(_source.media)[0]
-                : {}
-              return (
-                <EntityList.Item
-                  key={i}
-                  title={_source.name}
-                  thumbnailUrl={uri}
-                  thumbnailAltText={altText}
-                />
-              )
-            })}
-          </EntityList>
+      ) : (
+        <>
+          <FacetsList products={products} />
           <Button
             onClick={handleDialogOpen}
             style={{
@@ -121,7 +108,7 @@ const Field = () => {
           >
             Select facets
           </Button>
-        </Box>
+        </>
       )}
     </Box>
   )

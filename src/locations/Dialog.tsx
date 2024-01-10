@@ -23,14 +23,23 @@ const Dialog = () => {
   )
   const { isLoading, facets } = useFacets(credentials, { size: QUERY_SIZE })
 
-  const handleSelectItem = (facet: Aggregation, buckets: string[]) => {
-    setFieldValues({
-      ...fieldValues,
-      selected: {
-        ...fieldValues.selected,
-        [facet.meta.source.name]: { filter: facet.meta.source, buckets },
-      },
-    })
+  const handleSelectItem = (selectedFacet: Aggregation, selectedBuckets: string[]) => {
+    const updatedFieldValues = { ...fieldValues }
+
+    if (selectedBuckets.length) {
+      updatedFieldValues.selected = {
+        ...updatedFieldValues.selected,
+        [selectedFacet.meta.source.name]: {
+          filter: selectedFacet.meta.source,
+          buckets: selectedBuckets,
+        },
+      }
+    } else {
+      const { [selectedFacet.meta.source.name]: ignored, ...rest } = updatedFieldValues.selected
+      updatedFieldValues.selected = rest
+    }
+
+    setFieldValues(updatedFieldValues)
   }
 
   const getSelectedBuckets = ({ meta }: Aggregation): string[] => {
@@ -78,10 +87,11 @@ const Dialog = () => {
       <FormControl isRequired>
         <FormControl.Label>Products quantity</FormControl.Label>
         <TextInput
-          value={fieldValues.quantity.toString()}
+          value={fieldValues.quantity?.toString()}
           type="number"
           name="quantity"
           onChange={(e) => setFieldValues({ ...fieldValues, quantity: Number(e.target.value) })}
+          testId="quantity"
         />
         <FormControl.HelpText>Quantity of the products to display</FormControl.HelpText>
       </FormControl>
@@ -92,6 +102,7 @@ const Dialog = () => {
           type="text"
           name="title"
           onChange={(e) => setFieldValues({ ...fieldValues, title: e.target.value })}
+          testId="title"
         />
         <FormControl.HelpText>
           Title that will be displayed with list of products

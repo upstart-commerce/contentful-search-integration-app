@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { API_ENDPOINT } from '../constants'
 import type { Credentials, Facets, SearchData, SearchResponse } from '../types'
-import { buildFilters } from '../utils'
+import { buildFilters } from '../utils/filters'
 
 interface QueryParams {
   facets: Facets

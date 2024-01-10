@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import FormInput from '../components/FormInput'
 import type { Credentials, Input } from '../types'
-import { validateParameters } from '../utils'
+import { validateParameters } from '../utils/validateParameters'
 
 const inputs: Input[] = [
   {
@@ -76,7 +76,7 @@ const ConfigScreen = () => {
   return (
     <Workbench.Content>
       <Form>
-        <Heading>App configuration</Heading>
+        <Heading>Upstart search app configuration</Heading>
         {inputs.map((input) => (
           <FormInput
             key={input.id}

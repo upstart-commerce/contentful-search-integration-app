@@ -3,7 +3,7 @@ import { DoneIcon } from '@contentful/f36-icons'
 import { useCallback, useMemo, useState } from 'react'
 
 import type { BucketProps } from '../types'
-import { itemToString } from '../utils'
+import { itemToString } from '../utils/validateParameters'
 
 interface AutocompleteProps {
   items: BucketProps[]
@@ -78,6 +78,7 @@ export default function Autocomplete({ items, onChange, selected }: Autocomplete
       )}
       textOnAfterSelect="clear"
       closeAfterSelect={false}
+      testId="Autocomplete"
     />
   )
 }
