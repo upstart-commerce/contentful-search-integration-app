@@ -18,16 +18,6 @@ import type { Aggregation, Credentials, DialogInvocationParameters } from '../ty
 const Dialog = () => {
   const sdk = useSDK<DialogAppSDK>()
   const credentials = sdk.parameters.installation as Credentials
-  // const defaultValues = {
-  //   selected: {},
-  //   quantity: PRODUCTS_QUANTITY,
-  //   title: '',
-  // }
-  // const [fieldValues, setFieldValues] = useState<DialogInvocationParameters>({
-  //   ...defaultValues,
-  //   ...((sdk.parameters.invocation || {}) as DialogInvocationParameters),
-  // })
-
   const [fieldValues, setFieldValues] = useState<DialogInvocationParameters>(
     sdk.parameters.invocation as DialogInvocationParameters
   )
@@ -79,7 +69,6 @@ const Dialog = () => {
               <Autocomplete
                 items={facet.buckets}
                 onChange={(items) => handleSelectItem(facet, items)}
-                // selected={fieldValues.selected[facet.meta.source.name]?.buckets || []}
                 selected={getSelectedBuckets(facet)}
               />
             </FormControl>

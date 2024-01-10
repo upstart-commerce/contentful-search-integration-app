@@ -224,12 +224,6 @@ export interface SearchData {
   }
 }
 
-// export interface Facets {
-//   [key: string]: AggregationSource & {
-//     buckets: string[]
-//   }
-// }
-
 export interface Facets {
   [key: string]: {
     filter: AggregationSource
