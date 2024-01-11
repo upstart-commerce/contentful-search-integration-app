@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react-hooks'
+import { renderHook, waitFor } from '@testing-library/react'
 
 import type { TermsAggregationSource } from '../../types'
 import useProducts from '../useProducts'
@@ -142,10 +142,10 @@ describe('useProducts', () => {
   })
 
   it('fetches products and sets the data correctly', async () => {
-    const { result, waitForNextUpdate } = renderHook(() => useProducts(credentials, queryParams))
+    const { result } = renderHook(() => useProducts(credentials, queryParams))
 
     expect(result.current.isLoading).toBeTruthy()
-    await act(() => waitForNextUpdate())
+    await waitFor(() => expect(result.current.isLoading).toBeFalsy())
 
     expect(result.current.isLoading).toBeFalsy()
     expect(result.current.products).toEqual([

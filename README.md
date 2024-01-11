@@ -1,81 +1,26 @@
-This project was bootstrapped with [Create Contentful App](https://github.com/contentful/create-contentful-app).
+# Upstart Commerce Contentful Search Integration App
 
-## How to use
+Upstart Commerce Contentful Search Integration App integrates with Upstart Commerce APIs to provide a seamless way to preview and select product properties directly within the Contentful environment.
 
-Execute create-contentful-app with npm, npx or yarn to bootstrap the example:
+## Features
 
-```bash
-# npx
-npx create-contentful-app --typescript
+- Retrieve properties using Upstart Commerce APIs
+- Searchable list of properties
+- Saved properties including Facet name, metadata, aggregation and selected options (buckets)
+- Contentful preview updates real-time with Upstart Commerce APIs, showing the list of products found by the selected properties
+- Customize the quantity of products displayed
+- Customize title
+- Ensures a seamless integration of Contentful and Upstart Commerce within your application
 
-# npm
-npm init contentful-app -- --typescript
+## Usage
 
-# Yarn
-yarn create contentful-app --typescript
-```
+1. Install the application to your Contentful space using the following guide: [App installation](https://www.contentful.com/developers/docs/extensibility/app-framework/guide-install-app/)
+2. Configure the application by inserting your Upstart Commerce API credentials.
+3. Use the app to search for properties returned by the Upstart Commerce APIs.
+4. Select the properties you desire and save them to view the updated preview.
+5. You can also customize the number of products displayed (product quantity) and the title/name.
+6. Use the saved properties to integrate with the Contentful data on your application.
 
-## Available Scripts
+## Development
 
-In the project directory, you can run:
-
-#### `npm start`
-
-Creates or updates your app definition in Contentful, and runs the app in development mode.
-Open your app to view it in the browser.
-
-The page will reload if you make edits.
-You will also see any lint errors in the console.
-
-#### `npm run build`
-
-Builds the app for production to the `build` folder.
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.
-Your app is ready to be deployed!
-
-#### `npm run upload`
-
-Uploads the build folder to contentful and creates a bundle that is automatically activated.
-The command guides you through the deployment process and asks for all required arguments.
-Read [here](https://www.contentful.com/developers/docs/extensibility/app-framework/create-contentful-app/#deploy-with-contentful) for more information about the deployment process.
-
-#### `npm run upload-ci`
-
-Similar to `npm run upload` it will upload your app to contentful and activate it. The only difference is  
-that with this command all required arguments are read from the environment variables, for example when you add
-the upload command to your CI pipeline.
-
-For this command to work, the following environment variables must be set:
-
-- `CONTENTFUL_ORG_ID` - The ID of your organization
-- `CONTENTFUL_APP_DEF_ID` - The ID of the app to which to add the bundle
-- `CONTENTFUL_ACCESS_TOKEN` - A personal [access token](https://www.contentful.com/developers/docs/references/content-management-api/#/reference/personal-access-tokens)
-
-## Libraries to use
-
-To make your app look and feel like Contentful use the following libraries:
-
-- [Forma 36](https://f36.contentful.com/) – Contentful's design system
-- [Contentful Field Editors](https://www.contentful.com/developers/docs/extensibility/field-editors/) – Contentful's field editor React components
-
-## Using the `contentful-management` SDK
-
-In the default create contentful app output, a contentful management client is
-passed into each location. This can be used to interact with Contentful's
-management API. For example
-
-```js
-// Use the client
-cma.locale.getMany({}).then((locales) => console.log(locales))
-```
-
-Visit the [`contentful-management` documentation](https://www.contentful.com/developers/docs/extensibility/app-framework/sdk/#using-the-contentful-management-library)
-to find out more.
-
-## Learn More
-
-[Read more](https://www.contentful.com/developers/docs/extensibility/app-framework/create-contentful-app/) and check out the video on how to use the CLI.
-
-Create Contentful App uses [Create React App](https://create-react-app.dev/). You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started) and how to further customize your app.
+For the development instructions, please refer to [Contentful App Framework - Local development](https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-documentation/#debugging-locally) documentation.

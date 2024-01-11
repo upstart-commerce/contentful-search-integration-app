@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react-hooks'
+import { renderHook, waitFor } from '@testing-library/react'
 
 import useFacets from '../useFacets'
 
@@ -71,12 +71,11 @@ describe('useFacets', () => {
   })
 
   it('fetches facets and sets the data correctly', async () => {
-    const { result, waitForNextUpdate } = renderHook(() => useFacets(credentials, queryParams))
+    const { result } = renderHook(() => useFacets(credentials, queryParams))
 
     expect(result.current.isLoading).toBeTruthy()
-    await act(() => waitForNextUpdate())
+    await waitFor(() => expect(result.current.isLoading).toBeFalsy())
 
-    expect(result.current.isLoading).toBeFalsy()
     expect(result.current.facets).toEqual({
       __FACET_TERM_1__: {
         meta: {
