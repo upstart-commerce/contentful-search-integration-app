@@ -36,9 +36,6 @@ jobs:
 
       - name: Build
         run: npm run build
-      - uses: contentful/actions-app-deploy@v1
-        with:
-          organization-id: ${{ secrets.ORGANIZATION_ID }}
-          app-definition-id: ${{ secrets.APP_DEFINITION_ID }}
-          access-token: ${{ secrets.ACCESS_TOKEN }}
-          folder: build
+
+      - name: Deploy to Contentful
+        run: npm run upload-ci
