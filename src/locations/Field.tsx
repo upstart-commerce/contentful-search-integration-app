@@ -3,21 +3,25 @@ import {
   Box,
   Button,
   Card,
+  FormControl,
   Paragraph,
   SkeletonBodyText,
   SkeletonContainer,
+  SkeletonDisplayText,
   SkeletonImage,
+  SkeletonRow,
   Stack,
   Text,
+  TextInput,
 } from '@contentful/f36-components'
 import tokens from '@contentful/f36-tokens'
 import { useSDK } from '@contentful/react-apps-toolkit'
 import { css } from 'emotion'
 import isEmpty from 'lodash/isEmpty'
-import { useCallback, useEffect, useState } from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 
 import FacetsList from '../components/FacetsList'
-import { PRODUCTS_QUANTITY } from '../constants'
+import { MAX_VISIBLE_PRODUCTS, PRODUCTS_QUANTITY } from '../constants'
 import useProducts from '../hooks/useProducts'
 import type { Credentials, DialogInvocationParameters } from '../types'
 
@@ -39,29 +43,39 @@ const Field = () => {
     facets: fieldValues.selected,
   })
 
+  const numberOfLines = Math.min(fieldValues.quantity, MAX_VISIBLE_PRODUCTS)
+  const height = numberOfLines * 64 + 1
+
   const handleDialogOpen = useCallback(async () => {
     const result = await sdk.dialogs.openCurrentApp({
       position: 'center',
-      title: 'App Title',
+      title: 'Select facets',
       shouldCloseOnOverlayClick: true,
       shouldCloseOnEscapePress: true,
       width: 640,
-      minHeight: 'calc(100vh - 200px)',
       parameters: fieldValues,
     })
 
     if (result) {
       sdk.field.setValue(result)
     }
-  }, [sdk.dialogs, sdk.field])
+  }, [sdk.dialogs, sdk.field, fieldValues])
 
   useEffect(() => {
     sdk.field.onValueChanged((val) => {
       if (val) {
+        console.log('val', val)
         setFieldValues(val)
       }
     })
   }, [sdk])
+
+  useEffect(() => {
+    if (products) {
+      const inputsHeight = 198
+      sdk.window.updateHeight(height + inputsHeight)
+    }
+  }, [products, sdk])
 
   if (sdk.field.type !== 'Object') {
     return <Paragraph>Expected field type: Object</Paragraph>
@@ -71,13 +85,6 @@ const Field = () => {
     <Box>
       {sdk.field.type !== 'Object' ? (
         <Paragraph>Expected field type: Object</Paragraph>
-      ) : isLoading ? (
-        <div className={css({ position: 'relative', maxHeight: '50px' })}>
-          <SkeletonContainer testId="loading-skeleton">
-            <SkeletonImage height={50} width={50} />
-            <SkeletonBodyText offsetLeft={55} />
-          </SkeletonContainer>
-        </div>
       ) : isEmpty(fieldValues.selected) ? (
         <Card
           style={{
@@ -99,15 +106,80 @@ const Field = () => {
         </Card>
       ) : (
         <>
-          <FacetsList products={products} />
-          <Button
-            onClick={handleDialogOpen}
+          <Box
             style={{
-              marginTop: tokens.spacingXs,
+              display: 'flex',
+              flexDirection: 'column',
+              paddingTop: tokens.spacingXs,
+              paddingBottom: tokens.spacingXs,
+              backgroundColor: tokens.colorWhite,
             }}
           >
-            Select facets
-          </Button>
+            <Box
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: tokens.spacingM,
+                border: `1px dashed ${tokens.gray500}`,
+
+                marginBottom: tokens.spacingS,
+              }}
+            >
+              <Button onClick={handleDialogOpen}>Select facets</Button>
+            </Box>
+            <Box
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: tokens.spacingS,
+                justifyContent: 'space-between',
+              }}
+            >
+              <FormControl style={{ flex: 2, marginBottom: 0 }}>
+                <FormControl.Label>Title</FormControl.Label>
+                <TextInput
+                  value={fieldValues.title}
+                  type="text"
+                  name="title"
+                  onChange={(e) => setFieldValues({ ...fieldValues, title: e.target.value })}
+                  testId="title"
+                />
+                <FormControl.HelpText>
+                  Title that will be displayed with list of products
+                </FormControl.HelpText>
+              </FormControl>
+              <FormControl isRequired style={{ flex: 1, marginBottom: 0 }}>
+                <FormControl.Label>Products quantity</FormControl.Label>
+                <TextInput
+                  value={fieldValues.quantity?.toString()}
+                  type="number"
+                  min={1}
+                  name="quantity"
+                  onChange={(e) =>
+                    setFieldValues({ ...fieldValues, quantity: Number(e.target.value) })
+                  }
+                  testId="quantity"
+                />
+                <FormControl.HelpText>Quantity of the products to display</FormControl.HelpText>
+              </FormControl>
+            </Box>
+          </Box>
+          <Box style={{ overflowY: 'auto', height }}>
+            {isLoading ? (
+              <SkeletonContainer testId="loading-skeleton">
+                <SkeletonDisplayText
+                  numberOfLines={numberOfLines}
+                  width="100%"
+                  lineHeight={56}
+                  marginBottom={8}
+                  offsetTop={8}
+                />
+              </SkeletonContainer>
+            ) : (
+              <FacetsList products={products} />
+            )}
+          </Box>
         </>
       )}
     </Box>
