@@ -38,6 +38,7 @@ describe('useProducts', () => {
   beforeEach(() => {
     global.fetch = jest.fn().mockImplementation(() =>
       Promise.resolve({
+        ok: true,
         json: () =>
           Promise.resolve({
             result: {
@@ -190,5 +191,24 @@ describe('useProducts', () => {
         _type: 'product',
       },
     ])
+  })
+
+  it('sets error and stops loading if the request fails', async () => {
+    global.fetch = jest.fn().mockImplementation(() =>
+      Promise.resolve({
+        ok: false,
+        json: () => Promise.resolve({ message: 'Error Message' }),
+      })
+    )
+
+    const { result } = renderHook(() => useProducts(credentials, queryParams))
+
+    expect(result.current.isLoading).toBeTruthy()
+
+    await waitFor(() => expect(result.current.isLoading).toBeFalsy())
+
+    expect(result.current.isLoading).toBeFalsy()
+    expect(result.current.error).toBeTruthy()
+    expect(result.current.products).toEqual([])
   })
 })

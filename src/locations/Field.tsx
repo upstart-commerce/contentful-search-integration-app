@@ -2,24 +2,20 @@ import type { FieldAppSDK } from '@contentful/app-sdk'
 import {
   Box,
   Button,
-  Card,
+  FormControl,
   Paragraph,
-  SkeletonBodyText,
   SkeletonContainer,
-  SkeletonImage,
-  Stack,
-  Text,
+  SkeletonDisplayText,
+  TextInput,
 } from '@contentful/f36-components'
-import tokens from '@contentful/f36-tokens'
 import { useSDK } from '@contentful/react-apps-toolkit'
-import { css } from 'emotion'
-import isEmpty from 'lodash/isEmpty'
 import { useCallback, useEffect, useState } from 'react'
 
 import FacetsList from '../components/FacetsList'
-import { PRODUCTS_QUANTITY } from '../constants'
+import { MAX_VISIBLE_PRODUCTS, PRODUCTS_QUANTITY } from '../constants'
 import useProducts from '../hooks/useProducts'
 import type { Credentials, DialogInvocationParameters } from '../types'
+import { styles } from './Field.styles'
 
 const Field = () => {
   const sdk = useSDK<FieldAppSDK>()
@@ -34,26 +30,28 @@ const Field = () => {
   })
 
   const credentials = sdk.parameters.installation as Credentials
-  const { isLoading, products } = useProducts(credentials, {
+  const { isLoading, error, products } = useProducts(credentials, {
     size: fieldValues.quantity,
     facets: fieldValues.selected,
   })
 
+  const numberOfLines = Math.min(products.length || 1, fieldValues.quantity, MAX_VISIBLE_PRODUCTS)
+
   const handleDialogOpen = useCallback(async () => {
     const result = await sdk.dialogs.openCurrentApp({
       position: 'center',
-      title: 'App Title',
+      title: 'Select facets',
       shouldCloseOnOverlayClick: true,
       shouldCloseOnEscapePress: true,
-      width: 640,
-      minHeight: 'calc(100vh - 200px)',
+      width: styles.dialogWidth,
+      minHeight: styles.dialogMinHeight,
       parameters: fieldValues,
     })
 
     if (result) {
       sdk.field.setValue(result)
     }
-  }, [sdk.dialogs, sdk.field])
+  }, [sdk.dialogs, sdk.field, fieldValues])
 
   useEffect(() => {
     sdk.field.onValueChanged((val) => {
@@ -63,54 +61,70 @@ const Field = () => {
     })
   }, [sdk])
 
+  useEffect(() => {
+    if (products) {
+      sdk.window.updateHeight(styles.fieldHeight(numberOfLines))
+    }
+  }, [products, sdk])
+
   if (sdk.field.type !== 'Object') {
     return <Paragraph>Expected field type: Object</Paragraph>
   }
 
+  if (error) {
+    return <Paragraph>Connection to API failed</Paragraph>
+  }
+
   return (
-    <Box>
-      {sdk.field.type !== 'Object' ? (
-        <Paragraph>Expected field type: Object</Paragraph>
-      ) : isLoading ? (
-        <div className={css({ position: 'relative', maxHeight: '50px' })}>
+    <>
+      <Box className={styles.selectFacetsButtonContainer}>
+        <Box className={styles.selectFacetsButton}>
+          <Button onClick={handleDialogOpen}>Select facets</Button>
+        </Box>
+        <Box className={styles.inputsContainer}>
+          <FormControl className={styles.titleInputFormControl}>
+            <FormControl.Label>Title</FormControl.Label>
+            <TextInput
+              value={fieldValues.title}
+              type="text"
+              name="title"
+              onChange={(e) => setFieldValues({ ...fieldValues, title: e.target.value })}
+              testId="title"
+            />
+            <FormControl.HelpText>
+              Title that will be displayed with list of products
+            </FormControl.HelpText>
+          </FormControl>
+          <FormControl isRequired className={styles.quantityInputFormControl}>
+            <FormControl.Label>Products quantity</FormControl.Label>
+            <TextInput
+              value={fieldValues.quantity?.toString()}
+              type="number"
+              min={1}
+              name="quantity"
+              onChange={(e) => setFieldValues({ ...fieldValues, quantity: Number(e.target.value) })}
+              testId="quantity"
+            />
+            <FormControl.HelpText>Quantity of the products to display</FormControl.HelpText>
+          </FormControl>
+        </Box>
+      </Box>
+      <Box className={styles.skeleton(numberOfLines)}>
+        {isLoading ? (
           <SkeletonContainer testId="loading-skeleton">
-            <SkeletonImage height={50} width={50} />
-            <SkeletonBodyText offsetLeft={55} />
+            <SkeletonDisplayText
+              numberOfLines={numberOfLines}
+              width="100%"
+              lineHeight={56}
+              marginBottom={8}
+              offsetTop={8}
+            />
           </SkeletonContainer>
-        </div>
-      ) : isEmpty(fieldValues.selected) ? (
-        <Card
-          style={{
-            padding: tokens.spacingXl,
-            border: `1px dashed ${tokens.gray500}`,
-          }}
-        >
-          <Stack
-            style={{ zIndex: tokens.zIndexNotification }}
-            flexDirection="column"
-            alignItems="center"
-          >
-            <Button onClick={handleDialogOpen}>
-              <Stack>
-                <Text fontWeight="fontWeightDemiBold">Select facets</Text>
-              </Stack>
-            </Button>
-          </Stack>
-        </Card>
-      ) : (
-        <>
+        ) : (
           <FacetsList products={products} />
-          <Button
-            onClick={handleDialogOpen}
-            style={{
-              marginTop: tokens.spacingXs,
-            }}
-          >
-            Select facets
-          </Button>
-        </>
-      )}
-    </Box>
+        )}
+      </Box>
+    </>
   )
 }
 
