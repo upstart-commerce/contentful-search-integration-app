@@ -2,10 +2,10 @@ import type { DialogAppSDK } from '@contentful/app-sdk'
 import {
   Button,
   FormControl,
+  Paragraph,
   SkeletonBodyText,
   SkeletonContainer,
   Stack,
-  TextInput,
 } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 import { useState } from 'react'
@@ -14,6 +14,7 @@ import Autocomplete from '../components/Autocomplete'
 import { QUERY_SIZE } from '../constants'
 import useFacets from '../hooks/useFacets'
 import type { Aggregation, Credentials, DialogInvocationParameters } from '../types'
+import { styles } from './Dialog.styles'
 
 const Dialog = () => {
   const sdk = useSDK<DialogAppSDK>()
@@ -21,7 +22,7 @@ const Dialog = () => {
   const [fieldValues, setFieldValues] = useState<DialogInvocationParameters>(
     sdk.parameters.invocation as DialogInvocationParameters
   )
-  const { isLoading, facets } = useFacets(credentials, { size: QUERY_SIZE })
+  const { isLoading, error, facets } = useFacets(credentials, { size: QUERY_SIZE })
 
   const handleSelectItem = (selectedFacet: Aggregation, selectedBuckets: string[]) => {
     const updatedFieldValues = { ...fieldValues }
@@ -53,62 +54,33 @@ const Dialog = () => {
 
   const facetsList = Object.values(facets).filter((facet) => facet.buckets.length > 0)
 
+  if (error) {
+    return <Paragraph>Connection to API failed</Paragraph>
+  }
+
   return isLoading ? (
     <SkeletonContainer>
       <SkeletonBodyText numberOfLines={5} />
     </SkeletonContainer>
   ) : (
-    <div
-      style={{
-        position: 'relative',
-        height: '100vh',
-        maxHeight: '100vh',
-        overflow: 'auto',
-        paddingLeft: '20px',
-        paddingRight: '20px',
-        paddingTop: '20px',
-        paddingBottom: '60px',
-      }}
-    >
-      {facetsList.map((facet) => {
-        return (
-          <div key={facet.meta.source.id}>
-            <FormControl>
-              <FormControl.Label>{facet.meta.source.displayName}</FormControl.Label>
-              <Autocomplete
-                items={facet.buckets}
-                onChange={(items) => handleSelectItem(facet, items)}
-                selected={getSelectedBuckets(facet)}
-              />
-            </FormControl>
-          </div>
-        )
-      })}
-      <FormControl isRequired>
-        <FormControl.Label>Products quantity</FormControl.Label>
-        <TextInput
-          value={fieldValues.quantity?.toString()}
-          type="number"
-          name="quantity"
-          onChange={(e) => setFieldValues({ ...fieldValues, quantity: Number(e.target.value) })}
-          testId="quantity"
-        />
-        <FormControl.HelpText>Quantity of the products to display</FormControl.HelpText>
-      </FormControl>
-      <FormControl>
-        <FormControl.Label>Title</FormControl.Label>
-        <TextInput
-          value={fieldValues.title}
-          type="text"
-          name="title"
-          onChange={(e) => setFieldValues({ ...fieldValues, title: e.target.value })}
-          testId="title"
-        />
-        <FormControl.HelpText>
-          Title that will be displayed with list of products
-        </FormControl.HelpText>
-      </FormControl>
-      <Stack>
+    <>
+      <div className={styles.facetsContainer}>
+        {facetsList.map((facet) => {
+          return (
+            <div key={facet.meta.source.id}>
+              <FormControl>
+                <FormControl.Label>{facet.meta.source.displayName}</FormControl.Label>
+                <Autocomplete
+                  items={facet.buckets}
+                  onChange={(items) => handleSelectItem(facet, items)}
+                  selected={getSelectedBuckets(facet)}
+                />
+              </FormControl>
+            </div>
+          )
+        })}
+      </div>
+      <Stack className={styles.buttonsContainer}>
         <Button variant="secondary" onClick={() => sdk.close(sdk.parameters.invocation?.valueOf())}>
           Cancel
         </Button>
@@ -116,7 +88,7 @@ const Dialog = () => {
           Save
         </Button>
       </Stack>
-    </div>
+    </>
   )
 }
 
