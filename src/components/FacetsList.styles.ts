@@ -2,11 +2,11 @@ import { css } from 'emotion'
 
 export const styles = {
   noResult: css({
-    'overflow-y': 'auto',
+    overflowY: 'auto',
     height: '100%',
     display: 'flex',
-    'align-items': 'center',
-    'justify-content': 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     margin: '0',
   }),
 }
