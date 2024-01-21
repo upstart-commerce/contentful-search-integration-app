@@ -14,6 +14,7 @@ import Autocomplete from '../components/Autocomplete'
 import { QUERY_SIZE } from '../constants'
 import useFacets from '../hooks/useFacets'
 import type { Aggregation, Credentials, DialogInvocationParameters } from '../types'
+import { styles } from './Dialog.styles'
 
 const Dialog = () => {
   const sdk = useSDK<DialogAppSDK>()
@@ -21,7 +22,242 @@ const Dialog = () => {
   const [fieldValues, setFieldValues] = useState<DialogInvocationParameters>(
     sdk.parameters.invocation as DialogInvocationParameters
   )
-  const { isLoading, facets } = useFacets(credentials, { size: QUERY_SIZE })
+  // const { isLoading, facets } = useFacets(credentials, { size: QUERY_SIZE })
+
+  const isLoading = false
+  const facets = {
+    __FACET_TERM_1__: {
+      meta: {
+        source: {
+          name: '__FACET_TERM_1__',
+          metadata: {
+            type: 'terms',
+            isFullySupported: true,
+          },
+          aggregation: {
+            terms: {
+              field: '__FACET_TERM_1_FIELD__',
+              size: 1,
+              min_doc_count: 1,
+            },
+            aggs: {},
+          },
+          id: '__FACET_TERM_1_ID__',
+          displayName: '__FACET_TERM_1_DISPLAY_NAME__',
+        },
+      },
+      doc_count_error_upper_bound: 0,
+      sum_other_doc_count: 0,
+      buckets: [
+        {
+          key: '__FACET_TERM_1_BUCKET_1__',
+          doc_count: 1,
+        },
+        {
+          key: '__FACET_TERM_1_BUCKET_2__',
+          doc_count: 1,
+        },
+      ],
+    },
+    __FACET_TERM_2__: {
+      meta: {
+        source: {
+          name: '__FACET_TERM_2__',
+          metadata: {
+            type: 'terms',
+            isFullySupported: true,
+          },
+          aggregation: {
+            terms: {
+              field: '__FACET_TERM_2_FIELD__',
+              size: 1,
+              min_doc_count: 1,
+            },
+            aggs: {},
+          },
+          id: '__FACET_TERM_2_ID__',
+          displayName: '__FACET_TERM_2_DISPLAY_NAME__',
+        },
+      },
+      doc_count_error_upper_bound: 0,
+      sum_other_doc_count: 0,
+      buckets: [
+        {
+          key: '__FACET_TERM_2_BUCKET_1__',
+          doc_count: 1,
+        },
+        {
+          key: '__FACET_TERM_2_BUCKET_2__',
+          doc_count: 1,
+        },
+      ],
+    },
+    __FACET_TERM_3__: {
+      meta: {
+        source: {
+          name: '__FACET_TERM_3__',
+          metadata: {
+            type: 'terms',
+            isFullySupported: true,
+          },
+          aggregation: {
+            terms: {
+              field: '__FACET_TERM_3_FIELD__',
+              size: 1,
+              min_doc_count: 1,
+            },
+            aggs: {},
+          },
+          id: '__FACET_TERM_3_ID__',
+          displayName: '__FACET_TERM_3_DISPLAY_NAME__',
+        },
+      },
+      doc_count_error_upper_bound: 0,
+      sum_other_doc_count: 0,
+      buckets: [
+        {
+          key: '__FACET_TERM_3_BUCKET_1__',
+          doc_count: 1,
+        },
+        {
+          key: '__FACET_TERM_3_BUCKET_2__',
+          doc_count: 1,
+        },
+      ],
+    },
+    __FACET_TERM_4__: {
+      meta: {
+        source: {
+          name: '__FACET_TERM_4__',
+          metadata: {
+            type: 'terms',
+            isFullySupported: true,
+          },
+          aggregation: {
+            terms: {
+              field: '__FACET_TERM_4_FIELD__',
+              size: 1,
+              min_doc_count: 1,
+            },
+            aggs: {},
+          },
+          id: '__FACET_TERM_4_ID__',
+          displayName: '__FACET_TERM_4_DISPLAY_NAME__',
+        },
+      },
+      doc_count_error_upper_bound: 0,
+      sum_other_doc_count: 0,
+      buckets: [
+        {
+          key: '__FACET_TERM_4_BUCKET_1__',
+          doc_count: 1,
+        },
+        {
+          key: '__FACET_TERM_4_BUCKET_2__',
+          doc_count: 1,
+        },
+      ],
+    },
+    __FACET_TERM_5__: {
+      meta: {
+        source: {
+          name: '__FACET_TERM_5__',
+          metadata: {
+            type: 'terms',
+            isFullySupported: true,
+          },
+          aggregation: {
+            terms: {
+              field: '__FACET_TERM_5_FIELD__',
+              size: 1,
+              min_doc_count: 1,
+            },
+            aggs: {},
+          },
+          id: '__FACET_TERM_5_ID__',
+          displayName: '__FACET_TERM_5_DISPLAY_NAME__',
+        },
+      },
+      doc_count_error_upper_bound: 0,
+      sum_other_doc_count: 0,
+      buckets: [
+        {
+          key: '__FACET_TERM_5_BUCKET_1__',
+          doc_count: 1,
+        },
+        {
+          key: '__FACET_TERM_5_BUCKET_2__',
+          doc_count: 1,
+        },
+      ],
+    },
+    __FACET_TERM_6__: {
+      meta: {
+        source: {
+          name: '__FACET_TERM_6__',
+          metadata: {
+            type: 'terms',
+            isFullySupported: true,
+          },
+          aggregation: {
+            terms: {
+              field: '__FACET_TERM_6_FIELD__',
+              size: 1,
+              min_doc_count: 1,
+            },
+            aggs: {},
+          },
+          id: '__FACET_TERM_6_ID__',
+          displayName: '__FACET_TERM_6_DISPLAY_NAME__',
+        },
+      },
+      doc_count_error_upper_bound: 0,
+      sum_other_doc_count: 0,
+      buckets: [
+        {
+          key: '__FACET_TERM_6_BUCKET_1__',
+          doc_count: 1,
+        },
+        {
+          key: '__FACET_TERM_6_BUCKET_2__',
+          doc_count: 1,
+        },
+      ],
+    },
+    __FACET_TERM_7__: {
+      meta: {
+        source: {
+          name: '__FACET_TERM_7__',
+          metadata: {
+            type: 'terms',
+            isFullySupported: true,
+          },
+          aggregation: {
+            terms: {
+              field: '__FACET_TERM_7_FIELD__',
+              size: 1,
+              min_doc_count: 1,
+            },
+            aggs: {},
+          },
+          id: '__FACET_TERM_7_ID__',
+          displayName: '__FACET_TERM_7_DISPLAY_NAME__',
+        },
+      },
+      doc_count_error_upper_bound: 0,
+      sum_other_doc_count: 0,
+      buckets: [
+        {
+          key: '__FACET_TERM_7_BUCKET_1__',
+          doc_count: 1,
+        },
+        {
+          key: '__FACET_TERM_7_BUCKET_2__',
+          doc_count: 1,
+        },
+      ],
+    },
+  } as any as { [key: string]: Aggregation }
 
   const handleSelectItem = (selectedFacet: Aggregation, selectedBuckets: string[]) => {
     const updatedFieldValues = { ...fieldValues }
@@ -58,57 +294,24 @@ const Dialog = () => {
       <SkeletonBodyText numberOfLines={5} />
     </SkeletonContainer>
   ) : (
-    <div
-      style={{
-        position: 'relative',
-        height: '100vh',
-        maxHeight: '100vh',
-        overflow: 'auto',
-        paddingLeft: '20px',
-        paddingRight: '20px',
-        paddingTop: '20px',
-        paddingBottom: '60px',
-      }}
-    >
-      {facetsList.map((facet) => {
-        return (
-          <div key={facet.meta.source.id}>
-            <FormControl>
-              <FormControl.Label>{facet.meta.source.displayName}</FormControl.Label>
-              <Autocomplete
-                items={facet.buckets}
-                onChange={(items) => handleSelectItem(facet, items)}
-                selected={getSelectedBuckets(facet)}
-              />
-            </FormControl>
-          </div>
-        )
-      })}
-      <FormControl isRequired>
-        <FormControl.Label>Products quantity</FormControl.Label>
-        <TextInput
-          value={fieldValues.quantity?.toString()}
-          type="number"
-          name="quantity"
-          onChange={(e) => setFieldValues({ ...fieldValues, quantity: Number(e.target.value) })}
-          testId="quantity"
-        />
-        <FormControl.HelpText>Quantity of the products to display</FormControl.HelpText>
-      </FormControl>
-      <FormControl>
-        <FormControl.Label>Title</FormControl.Label>
-        <TextInput
-          value={fieldValues.title}
-          type="text"
-          name="title"
-          onChange={(e) => setFieldValues({ ...fieldValues, title: e.target.value })}
-          testId="title"
-        />
-        <FormControl.HelpText>
-          Title that will be displayed with list of products
-        </FormControl.HelpText>
-      </FormControl>
-      <Stack>
+    <>
+      <div className={styles.facetsContainer}>
+        {facetsList.map((facet) => {
+          return (
+            <div key={facet.meta.source.id}>
+              <FormControl>
+                <FormControl.Label>{facet.meta.source.displayName}</FormControl.Label>
+                <Autocomplete
+                  items={facet.buckets}
+                  onChange={(items) => handleSelectItem(facet, items)}
+                  selected={getSelectedBuckets(facet)}
+                />
+              </FormControl>
+            </div>
+          )
+        })}
+      </div>
+      <Stack className={styles.buttonsContainer}>
         <Button variant="secondary" onClick={() => sdk.close(sdk.parameters.invocation?.valueOf())}>
           Cancel
         </Button>
@@ -116,7 +319,7 @@ const Dialog = () => {
           Save
         </Button>
       </Stack>
-    </div>
+    </>
   )
 }
 

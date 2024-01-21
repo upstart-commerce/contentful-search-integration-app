@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react'
 
 import type { BucketProps } from '../types'
 import { itemToString } from '../utils/validateParameters'
+import { styles } from './Autocomplete.styles'
 
 interface AutocompleteProps {
   items: BucketProps[]
@@ -57,6 +58,7 @@ export default function Autocomplete({ items, onChange, selected }: Autocomplete
   return (
     <AutocompleteBase
       items={filteredItems}
+      className={selectedItems.length > 0 ? styles.placeholder : ''}
       listWidth="full"
       onOpen={() => setIsOpen(true)}
       onClose={() => setIsOpen(false)}
@@ -67,9 +69,9 @@ export default function Autocomplete({ items, onChange, selected }: Autocomplete
       renderItem={(item) => (
         <Flex alignItems="center">
           {selectedItems.includes(itemToString(item)) ? (
-            <DoneIcon size="tiny" style={{ marginRight: '10px' }} />
+            <DoneIcon size="tiny" className={styles.iconMargin} />
           ) : (
-            <div style={{ marginRight: '10px', width: '16px', height: '16px' }}></div>
+            <div className={styles.emptyDiv}></div>
           )}
           <Box as="span" display="inline">
             {itemToString(item)}
