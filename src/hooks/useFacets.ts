@@ -52,9 +52,11 @@ export default function useFacets(
           },
         })
         const res = await response.json()
-        if (res.ok) {
+        if (response.ok) {
           const data = res.result.indexes.catalog_live.data as SearchData
           setFacets(data.aggregations)
+        } else {
+          throw new Error(res.message.response.error.reason)
         }
       } catch (error) {
         setError(true)

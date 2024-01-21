@@ -2,10 +2,10 @@ import type { DialogAppSDK } from '@contentful/app-sdk'
 import {
   Button,
   FormControl,
+  Paragraph,
   SkeletonBodyText,
   SkeletonContainer,
   Stack,
-  TextInput,
 } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 import { useState } from 'react'
@@ -22,242 +22,7 @@ const Dialog = () => {
   const [fieldValues, setFieldValues] = useState<DialogInvocationParameters>(
     sdk.parameters.invocation as DialogInvocationParameters
   )
-  // const { isLoading, facets } = useFacets(credentials, { size: QUERY_SIZE })
-
-  const isLoading = false
-  const facets = {
-    __FACET_TERM_1__: {
-      meta: {
-        source: {
-          name: '__FACET_TERM_1__',
-          metadata: {
-            type: 'terms',
-            isFullySupported: true,
-          },
-          aggregation: {
-            terms: {
-              field: '__FACET_TERM_1_FIELD__',
-              size: 1,
-              min_doc_count: 1,
-            },
-            aggs: {},
-          },
-          id: '__FACET_TERM_1_ID__',
-          displayName: '__FACET_TERM_1_DISPLAY_NAME__',
-        },
-      },
-      doc_count_error_upper_bound: 0,
-      sum_other_doc_count: 0,
-      buckets: [
-        {
-          key: '__FACET_TERM_1_BUCKET_1__',
-          doc_count: 1,
-        },
-        {
-          key: '__FACET_TERM_1_BUCKET_2__',
-          doc_count: 1,
-        },
-      ],
-    },
-    __FACET_TERM_2__: {
-      meta: {
-        source: {
-          name: '__FACET_TERM_2__',
-          metadata: {
-            type: 'terms',
-            isFullySupported: true,
-          },
-          aggregation: {
-            terms: {
-              field: '__FACET_TERM_2_FIELD__',
-              size: 1,
-              min_doc_count: 1,
-            },
-            aggs: {},
-          },
-          id: '__FACET_TERM_2_ID__',
-          displayName: '__FACET_TERM_2_DISPLAY_NAME__',
-        },
-      },
-      doc_count_error_upper_bound: 0,
-      sum_other_doc_count: 0,
-      buckets: [
-        {
-          key: '__FACET_TERM_2_BUCKET_1__',
-          doc_count: 1,
-        },
-        {
-          key: '__FACET_TERM_2_BUCKET_2__',
-          doc_count: 1,
-        },
-      ],
-    },
-    __FACET_TERM_3__: {
-      meta: {
-        source: {
-          name: '__FACET_TERM_3__',
-          metadata: {
-            type: 'terms',
-            isFullySupported: true,
-          },
-          aggregation: {
-            terms: {
-              field: '__FACET_TERM_3_FIELD__',
-              size: 1,
-              min_doc_count: 1,
-            },
-            aggs: {},
-          },
-          id: '__FACET_TERM_3_ID__',
-          displayName: '__FACET_TERM_3_DISPLAY_NAME__',
-        },
-      },
-      doc_count_error_upper_bound: 0,
-      sum_other_doc_count: 0,
-      buckets: [
-        {
-          key: '__FACET_TERM_3_BUCKET_1__',
-          doc_count: 1,
-        },
-        {
-          key: '__FACET_TERM_3_BUCKET_2__',
-          doc_count: 1,
-        },
-      ],
-    },
-    __FACET_TERM_4__: {
-      meta: {
-        source: {
-          name: '__FACET_TERM_4__',
-          metadata: {
-            type: 'terms',
-            isFullySupported: true,
-          },
-          aggregation: {
-            terms: {
-              field: '__FACET_TERM_4_FIELD__',
-              size: 1,
-              min_doc_count: 1,
-            },
-            aggs: {},
-          },
-          id: '__FACET_TERM_4_ID__',
-          displayName: '__FACET_TERM_4_DISPLAY_NAME__',
-        },
-      },
-      doc_count_error_upper_bound: 0,
-      sum_other_doc_count: 0,
-      buckets: [
-        {
-          key: '__FACET_TERM_4_BUCKET_1__',
-          doc_count: 1,
-        },
-        {
-          key: '__FACET_TERM_4_BUCKET_2__',
-          doc_count: 1,
-        },
-      ],
-    },
-    __FACET_TERM_5__: {
-      meta: {
-        source: {
-          name: '__FACET_TERM_5__',
-          metadata: {
-            type: 'terms',
-            isFullySupported: true,
-          },
-          aggregation: {
-            terms: {
-              field: '__FACET_TERM_5_FIELD__',
-              size: 1,
-              min_doc_count: 1,
-            },
-            aggs: {},
-          },
-          id: '__FACET_TERM_5_ID__',
-          displayName: '__FACET_TERM_5_DISPLAY_NAME__',
-        },
-      },
-      doc_count_error_upper_bound: 0,
-      sum_other_doc_count: 0,
-      buckets: [
-        {
-          key: '__FACET_TERM_5_BUCKET_1__',
-          doc_count: 1,
-        },
-        {
-          key: '__FACET_TERM_5_BUCKET_2__',
-          doc_count: 1,
-        },
-      ],
-    },
-    __FACET_TERM_6__: {
-      meta: {
-        source: {
-          name: '__FACET_TERM_6__',
-          metadata: {
-            type: 'terms',
-            isFullySupported: true,
-          },
-          aggregation: {
-            terms: {
-              field: '__FACET_TERM_6_FIELD__',
-              size: 1,
-              min_doc_count: 1,
-            },
-            aggs: {},
-          },
-          id: '__FACET_TERM_6_ID__',
-          displayName: '__FACET_TERM_6_DISPLAY_NAME__',
-        },
-      },
-      doc_count_error_upper_bound: 0,
-      sum_other_doc_count: 0,
-      buckets: [
-        {
-          key: '__FACET_TERM_6_BUCKET_1__',
-          doc_count: 1,
-        },
-        {
-          key: '__FACET_TERM_6_BUCKET_2__',
-          doc_count: 1,
-        },
-      ],
-    },
-    __FACET_TERM_7__: {
-      meta: {
-        source: {
-          name: '__FACET_TERM_7__',
-          metadata: {
-            type: 'terms',
-            isFullySupported: true,
-          },
-          aggregation: {
-            terms: {
-              field: '__FACET_TERM_7_FIELD__',
-              size: 1,
-              min_doc_count: 1,
-            },
-            aggs: {},
-          },
-          id: '__FACET_TERM_7_ID__',
-          displayName: '__FACET_TERM_7_DISPLAY_NAME__',
-        },
-      },
-      doc_count_error_upper_bound: 0,
-      sum_other_doc_count: 0,
-      buckets: [
-        {
-          key: '__FACET_TERM_7_BUCKET_1__',
-          doc_count: 1,
-        },
-        {
-          key: '__FACET_TERM_7_BUCKET_2__',
-          doc_count: 1,
-        },
-      ],
-    },
-  } as any as { [key: string]: Aggregation }
+  const { isLoading, error, facets } = useFacets(credentials, { size: QUERY_SIZE })
 
   const handleSelectItem = (selectedFacet: Aggregation, selectedBuckets: string[]) => {
     const updatedFieldValues = { ...fieldValues }
@@ -288,6 +53,10 @@ const Dialog = () => {
   }
 
   const facetsList = Object.values(facets).filter((facet) => facet.buckets.length > 0)
+
+  if (error) {
+    return <Paragraph>Connection to API failed</Paragraph>
+  }
 
   return isLoading ? (
     <SkeletonContainer>
