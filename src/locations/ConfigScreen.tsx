@@ -10,6 +10,11 @@ import { validateParameters } from '../utils/validateParameters'
 
 const inputs: Input[] = [
   {
+    label: 'API endpoint',
+    id: 'apiEndpoint',
+    helpText: 'The API endpoint of the Upstart API.',
+  },
+  {
     label: 'API key',
     id: 'apiKey',
     helpText: 'The API key of the Upstart API.',
@@ -28,6 +33,7 @@ const inputs: Input[] = [
 
 const ConfigScreen = () => {
   const [parameters, setParameters] = useState<Credentials>({
+    apiEndpoint: '',
     apiKey: '',
     siteId: '',
     tenantId: '',
