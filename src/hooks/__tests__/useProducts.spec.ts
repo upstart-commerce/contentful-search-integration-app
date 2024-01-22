@@ -4,6 +4,7 @@ import type { TermsAggregationSource } from '../../types'
 import useProducts from '../useProducts'
 
 const credentials = {
+  apiEndpoint: 'test-api-endpoint',
   apiKey: 'test-api-key',
   siteId: 'test-site-id',
   tenantId: 'test-tenant-id',
