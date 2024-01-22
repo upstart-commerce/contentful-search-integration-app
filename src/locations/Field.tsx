@@ -57,8 +57,7 @@ const Field = () => {
   const handleFacetsReset = async () => {
     setFieldValues((prevValues) => ({ ...prevValues, selected: defaultValues.selected }))
     try {
-      const currentValues = sdk.field.getValue()
-      await sdk.field.setValue({ ...currentValues, selected: defaultValues.selected })
+      await sdk.field.setValue({ ...fieldValues, selected: defaultValues.selected })
     } catch (error) {
       console.error('Failed to reset the selected facets:', error)
     }
