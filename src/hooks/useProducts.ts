@@ -22,7 +22,7 @@ export default function useProducts(
 
     const fetchProducts = async () => {
       try {
-        const response = await fetch(apiEndpoint, {
+        const response = await fetch(`${apiEndpoint}/v1/search/routes/catalog_live/search`, {
           method: 'POST',
           body: JSON.stringify({
             search: {
