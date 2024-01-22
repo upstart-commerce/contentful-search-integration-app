@@ -1,30 +1,39 @@
-import { EntityList, SectionHeading } from '@contentful/f36-components'
+import { FormControl } from '@contentful/f36-components'
 
-import type { SearchResponse } from '../types'
-import { styles } from './FacetsList.styles'
+import Autocomplete from '../components/Autocomplete'
+import type { Aggregation, DialogInvocationParameters } from '../types'
 
 interface FacetsListProps {
-  products: SearchResponse[]
+  facets: Aggregation[]
+  fieldValues: DialogInvocationParameters
+  handleSelectItem: (selectedFacet: Aggregation, selectedBuckets: string[]) => void
 }
 
-const FacetsList = ({ products }: FacetsListProps) => {
-  return products.length > 0 ? (
-    <EntityList>
-      {products.map(({ _source }, i) => {
-        const { uri = '', altText = '' } = _source.media ? Object.values(_source.media)[0] : {}
-        return (
-          <EntityList.Item
-            key={i}
-            title={_source.name}
-            thumbnailUrl={uri}
-            thumbnailAltText={altText}
-            aria-label={_source.name}
-          />
-        )
-      })}
-    </EntityList>
-  ) : (
-    <SectionHeading className={styles.noResult}>No items to display</SectionHeading>
+const FacetsList = ({ facets, fieldValues, handleSelectItem }: FacetsListProps) => {
+  const getSelectedBuckets = ({ meta }: Aggregation): string[] => {
+    const name = meta.source.name
+    return fieldValues.selected &&
+      name in fieldValues.selected &&
+      fieldValues.selected[name].buckets
+      ? fieldValues.selected[name].buckets
+      : []
+  }
+
+  return (
+    <div>
+      {facets.map((facet) => (
+        <div key={facet.meta.source.id}>
+          <FormControl>
+            <FormControl.Label>{facet.meta.source.displayName}</FormControl.Label>
+            <Autocomplete
+              items={facet.buckets}
+              onChange={(items) => handleSelectItem(facet, items)}
+              selected={getSelectedBuckets(facet)}
+            />
+          </FormControl>
+        </div>
+      ))}
+    </div>
   )
 }
 

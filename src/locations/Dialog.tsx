@@ -1,17 +1,17 @@
 import type { DialogAppSDK } from '@contentful/app-sdk'
 import {
+  Box,
   Button,
-  FormControl,
   Paragraph,
-  SkeletonBodyText,
   SkeletonContainer,
+  SkeletonDisplayText,
   Stack,
 } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 import { useState } from 'react'
 
-import Autocomplete from '../components/Autocomplete'
-import { QUERY_SIZE } from '../constants'
+import FacetsList from '../components/FacetsList'
+import { MAX_VISIBLE_FACETS, QUERY_SIZE } from '../constants'
 import useFacets from '../hooks/useFacets'
 import type { Aggregation, Credentials, DialogInvocationParameters } from '../types'
 import { styles } from './Dialog.styles'
@@ -24,18 +24,23 @@ const Dialog = () => {
   )
   const { isLoading, error, facets } = useFacets(credentials, { size: QUERY_SIZE })
 
+  const numberOfLines = Math.min(
+    Object.keys(facets || {}).length || MAX_VISIBLE_FACETS,
+    MAX_VISIBLE_FACETS
+  )
+
   const handleSelectItem = (selectedFacet: Aggregation, selectedBuckets: string[]) => {
     const updatedFieldValues = { ...fieldValues }
 
     if (selectedBuckets.length) {
       updatedFieldValues.selected = {
-        ...updatedFieldValues.selected,
+        ...(updatedFieldValues.selected || {}),
         [selectedFacet.meta.source.name]: {
           filter: selectedFacet.meta.source,
           buckets: selectedBuckets,
         },
       }
-    } else {
+    } else if (updatedFieldValues.selected) {
       const { [selectedFacet.meta.source.name]: ignored, ...rest } = updatedFieldValues.selected
       updatedFieldValues.selected = rest
     }
@@ -43,42 +48,32 @@ const Dialog = () => {
     setFieldValues(updatedFieldValues)
   }
 
-  const getSelectedBuckets = ({ meta }: Aggregation): string[] => {
-    const name = meta.source.name
-    return fieldValues.selected &&
-      name in fieldValues.selected &&
-      fieldValues.selected[name].buckets
-      ? fieldValues.selected[name].buckets
-      : []
-  }
-
-  const facetsList = Object.values(facets).filter((facet) => facet.buckets.length > 0)
+  const facetsList = Object.values(facets || {}).filter((facet) => facet.buckets.length > 0)
 
   if (error) {
     return <Paragraph>Connection to API failed</Paragraph>
   }
 
   return isLoading ? (
-    <SkeletonContainer>
-      <SkeletonBodyText numberOfLines={5} />
-    </SkeletonContainer>
+    <Box className={styles.skeleton(numberOfLines)}>
+      <SkeletonContainer testId="loading-skeleton">
+        <SkeletonDisplayText
+          numberOfLines={numberOfLines}
+          width="100%"
+          lineHeight={68}
+          marginBottom={24}
+          offsetTop={8}
+        />
+      </SkeletonContainer>
+    </Box>
   ) : (
     <>
-      <div className={styles.facetsContainer}>
-        {facetsList.map((facet) => {
-          return (
-            <div key={facet.meta.source.id}>
-              <FormControl>
-                <FormControl.Label>{facet.meta.source.displayName}</FormControl.Label>
-                <Autocomplete
-                  items={facet.buckets}
-                  onChange={(items) => handleSelectItem(facet, items)}
-                  selected={getSelectedBuckets(facet)}
-                />
-              </FormControl>
-            </div>
-          )
-        })}
+      <div className={styles.dialogContainer}>
+        <FacetsList
+          facets={facetsList}
+          fieldValues={fieldValues}
+          handleSelectItem={handleSelectItem}
+        />
       </div>
       <Stack className={styles.buttonsContainer}>
         <Button variant="secondary" onClick={() => sdk.close(sdk.parameters.invocation?.valueOf())}>
