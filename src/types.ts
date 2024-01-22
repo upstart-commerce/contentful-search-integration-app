@@ -1,6 +1,7 @@
 import type { KeyValueMap } from 'contentful-management'
 
 export interface Credentials {
+  apiEndpoint: string
   apiKey: string
   siteId: string
   tenantId: string

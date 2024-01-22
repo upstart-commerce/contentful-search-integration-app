@@ -3,6 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import useFacets from '../useFacets'
 
 const credentials = {
+  apiEndpoint: 'test-api-endpoint',
   apiKey: 'test-api-key',
   siteId: 'test-site-id',
   tenantId: 'test-tenant-id',
