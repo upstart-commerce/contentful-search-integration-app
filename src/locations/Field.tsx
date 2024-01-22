@@ -54,9 +54,15 @@ const Field = () => {
     }
   }, [sdk.dialogs, sdk.field, fieldValues])
 
-  // const handleFacetsReset = async () => {
-  //   setFieldValues((prevValues) => ({ ...prevValues, selected: defaultValues.selected }))
-  // }
+  const handleFacetsReset = async () => {
+    setFieldValues((prevValues) => ({ ...prevValues, selected: defaultValues.selected }))
+    try {
+      const currentValues = sdk.field.getValue()
+      await sdk.field.setValue({ ...currentValues, selected: defaultValues.selected })
+    } catch (error) {
+      console.error('Failed to reset the selected facets:', error)
+    }
+  }
 
   useEffect(() => {
     sdk.field.onValueChanged((val) => {
@@ -88,16 +94,7 @@ const Field = () => {
             <Button variant="secondary" size="small" onClick={handleDialogOpen}>
               Select facets
             </Button>
-            <Button
-              variant="negative"
-              size="small"
-              onClick={() =>
-                setFieldValues((prevValues) => ({
-                  ...prevValues,
-                  selected: defaultValues.selected,
-                }))
-              }
-            >
+            <Button variant="negative" size="small" onClick={handleFacetsReset}>
               Reset
             </Button>
           </ButtonGroup>
