@@ -2,6 +2,7 @@ import type { FieldAppSDK } from '@contentful/app-sdk'
 import {
   Box,
   Button,
+  ButtonGroup,
   FormControl,
   Paragraph,
   SkeletonContainer,
@@ -11,7 +12,7 @@ import {
 import { useSDK } from '@contentful/react-apps-toolkit'
 import { useCallback, useEffect, useState } from 'react'
 
-import FacetsList from '../components/FacetsList'
+import ProductsList from '../components/ProductsList'
 import { MAX_VISIBLE_PRODUCTS, PRODUCTS_QUANTITY } from '../constants'
 import useProducts from '../hooks/useProducts'
 import type { Credentials, DialogInvocationParameters } from '../types'
@@ -53,6 +54,10 @@ const Field = () => {
     }
   }, [sdk.dialogs, sdk.field, fieldValues])
 
+  // const handleFacetsReset = async () => {
+  //   setFieldValues((prevValues) => ({ ...prevValues, selected: defaultValues.selected }))
+  // }
+
   useEffect(() => {
     sdk.field.onValueChanged((val) => {
       if (val) {
@@ -79,7 +84,23 @@ const Field = () => {
     <>
       <Box className={styles.selectFacetsButtonContainer}>
         <Box className={styles.selectFacetsButton}>
-          <Button onClick={handleDialogOpen}>Select facets</Button>
+          <ButtonGroup variant="spaced" spacing="spacingM">
+            <Button variant="secondary" size="small" onClick={handleDialogOpen}>
+              Select facets
+            </Button>
+            <Button
+              variant="negative"
+              size="small"
+              onClick={() =>
+                setFieldValues((prevValues) => ({
+                  ...prevValues,
+                  selected: defaultValues.selected,
+                }))
+              }
+            >
+              Reset
+            </Button>
+          </ButtonGroup>
         </Box>
         <Box className={styles.inputsContainer}>
           <FormControl className={styles.titleInputFormControl}>
@@ -121,7 +142,7 @@ const Field = () => {
             />
           </SkeletonContainer>
         ) : (
-          <FacetsList products={products} />
+          <ProductsList products={products} />
         )}
       </Box>
     </>

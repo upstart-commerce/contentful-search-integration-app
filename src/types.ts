@@ -22,7 +22,7 @@ export interface FormInputProps {
 
 export interface BucketProps {
   doc_count: number
-  key: number
+  key: string
   key_as_string?: string
 }
 
@@ -206,7 +206,7 @@ export interface Aggregation {
   }
   buckets: {
     doc_count: number
-    key: number
+    key: string
     key_as_string?: string
   }[]
 }
@@ -220,7 +220,7 @@ export interface SearchData {
     hits: SearchResponse[]
     max_score: number
   }
-  aggregations: {
+  aggregations?: {
     [key: string]: Aggregation
   }
 }
@@ -233,7 +233,7 @@ export interface Facets {
 }
 
 export interface DialogInvocationParameters extends KeyValueMap {
-  selected: Facets
+  selected?: Facets
   quantity: number
   title: string
 }

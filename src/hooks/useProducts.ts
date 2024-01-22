@@ -4,7 +4,7 @@ import type { Credentials, Facets, SearchData, SearchResponse } from '../types'
 import { buildFilters } from '../utils/filters'
 
 interface QueryParams {
-  facets: Facets
+  facets?: Facets
   size: number
 }
 
