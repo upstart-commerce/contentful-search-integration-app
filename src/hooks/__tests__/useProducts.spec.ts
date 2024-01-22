@@ -4,7 +4,7 @@ import type { TermsAggregationSource } from '../../types'
 import useProducts from '../useProducts'
 
 const credentials = {
-  apiEndpoint: 'test-api-endpoint',
+  apiEndpoint: 'http://test-api-endpoint.com',
   apiKey: 'test-api-key',
   siteId: 'test-site-id',
   tenantId: 'test-tenant-id',
@@ -148,6 +148,18 @@ describe('useProducts', () => {
 
     expect(result.current.isLoading).toBeTruthy()
     await waitFor(() => expect(result.current.isLoading).toBeFalsy())
+
+    expect(fetch).toHaveBeenCalledWith(
+      `${credentials.apiEndpoint}/v1/search/routes/catalog_live/search`,
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({
+          'x-upstart-api-key': credentials.apiKey,
+          'X-Upstart-Site': credentials.siteId,
+          'X-Upstart-Tenant': credentials.tenantId,
+        }),
+      })
+    )
 
     expect(result.current.isLoading).toBeFalsy()
     expect(result.current.products).toEqual([
