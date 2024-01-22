@@ -10,7 +10,8 @@ import {
   TextInput,
 } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
-import { useCallback, useEffect, useState } from 'react'
+import debounce from 'lodash/debounce'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import ProductsList from '../components/ProductsList'
 import { MAX_VISIBLE_PRODUCTS, PRODUCTS_QUANTITY } from '../constants'
@@ -63,6 +64,26 @@ const Field = () => {
     }
   }
 
+  const handleTitleChange = useMemo(
+    () =>
+      debounce((value: string) => {
+        const updatedValues = { ...fieldValues, title: value }
+        setFieldValues(updatedValues)
+        sdk.field.setValue(updatedValues)
+      }, 100),
+    [fieldValues, sdk]
+  )
+
+  const handleQuantityChange = useMemo(
+    () =>
+      debounce((value: number) => {
+        const updatedValues = { ...fieldValues, quantity: value }
+        setFieldValues(updatedValues)
+        sdk.field.setValue(updatedValues)
+      }, 100),
+    [fieldValues, sdk]
+  )
+
   useEffect(() => {
     sdk.field.onValueChanged((val) => {
       if (val) {
@@ -105,7 +126,7 @@ const Field = () => {
               value={fieldValues.title}
               type="text"
               name="title"
-              onChange={(e) => setFieldValues({ ...fieldValues, title: e.target.value })}
+              onChange={(e) => handleTitleChange(e.target.value)}
               testId="title"
             />
             <FormControl.HelpText>
@@ -119,7 +140,7 @@ const Field = () => {
               type="number"
               min={1}
               name="quantity"
-              onChange={(e) => setFieldValues({ ...fieldValues, quantity: Number(e.target.value) })}
+              onChange={(e) => handleQuantityChange(Number(e.target.value))}
               testId="quantity"
             />
             <FormControl.HelpText>Quantity of the products to display</FormControl.HelpText>
