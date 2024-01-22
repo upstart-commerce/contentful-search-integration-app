@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 
-import { API_ENDPOINT } from '../constants'
 import type { Credentials, SearchData } from '../types'
 
 interface QueryParams {
@@ -8,7 +7,7 @@ interface QueryParams {
 }
 
 export default function useFacets(
-  { apiKey, siteId, tenantId }: Credentials,
+  { apiEndpoint, apiKey, siteId, tenantId }: Credentials,
   { size }: QueryParams
 ) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -20,7 +19,7 @@ export default function useFacets(
 
     const fetchFacets = async () => {
       try {
-        const response = await fetch(API_ENDPOINT, {
+        const response = await fetch(apiEndpoint, {
           method: 'POST',
           body: JSON.stringify({
             search: {

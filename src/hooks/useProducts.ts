@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { API_ENDPOINT } from '../constants'
 import type { Credentials, Facets, SearchData, SearchResponse } from '../types'
 import { buildFilters } from '../utils/filters'
 
@@ -10,7 +9,7 @@ interface QueryParams {
 }
 
 export default function useProducts(
-  { apiKey, siteId, tenantId }: Credentials,
+  { apiEndpoint, apiKey, siteId, tenantId }: Credentials,
   { facets, size }: QueryParams
 ) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -23,7 +22,7 @@ export default function useProducts(
 
     const fetchProducts = async () => {
       try {
-        const response = await fetch(API_ENDPOINT, {
+        const response = await fetch(apiEndpoint, {
           method: 'POST',
           body: JSON.stringify({
             search: {
