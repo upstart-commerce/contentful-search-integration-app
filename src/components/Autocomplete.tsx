@@ -15,6 +15,9 @@ interface AutocompleteProps {
 export default function Autocomplete({ items, onChange, selected }: AutocompleteProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedItems, setSelectedItems] = useState<string[]>(selected)
+  const [validSelectedItems, setValidSelectedItems] = useState(
+    selected.filter((item) => items.find((bucket) => itemToString(bucket) === item))
+  )
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const filteredItems = useMemo(() => {
@@ -27,16 +30,16 @@ export default function Autocomplete({ items, onChange, selected }: Autocomplete
     if (isOpen) {
       return 'Type to search'
     }
-    if (!selectedItems.length) {
+    if (!validSelectedItems.length) {
       return 'Select one or more items'
     }
 
     const itemText =
-      selectedItems.length > 1
-        ? `${selectedItems[0]} and ${selectedItems.length - 1} more`
-        : selectedItems[0]
+      validSelectedItems.length > 1
+        ? `${validSelectedItems[0]} and ${validSelectedItems.length - 1} more`
+        : validSelectedItems[0]
     return `Selected: ${itemText}`
-  }, [selectedItems, isOpen])
+  }, [validSelectedItems, isOpen])
 
   const handleInputValueChange = (value: string) => {
     setSearchTerm(value)
@@ -50,15 +53,18 @@ export default function Autocomplete({ items, onChange, selected }: Autocomplete
         : [...selectedItems, itemString]
 
       setSelectedItems(updatedSelectedItems)
+      setValidSelectedItems(
+        updatedSelectedItems.filter((item) => items.find((bucket) => itemToString(bucket) === item))
+      )
       onChange(updatedSelectedItems)
     },
-    [selectedItems, onChange]
+    [selectedItems, onChange, items]
   )
 
   return (
     <AutocompleteBase
       items={filteredItems}
-      className={selectedItems.length > 0 ? styles.placeholder : ''}
+      className={validSelectedItems.length > 0 ? styles.placeholder : ''}
       listWidth="full"
       onOpen={() => setIsOpen(true)}
       onClose={() => setIsOpen(false)}
@@ -68,7 +74,7 @@ export default function Autocomplete({ items, onChange, selected }: Autocomplete
       itemToString={itemToString}
       renderItem={(item) => (
         <Flex alignItems="center">
-          {selectedItems.includes(itemToString(item)) ? (
+          {validSelectedItems.includes(itemToString(item)) ? (
             <DoneIcon size="tiny" className={styles.iconMargin} />
           ) : (
             <div className={styles.emptyDiv}></div>
