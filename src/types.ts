@@ -50,6 +50,12 @@ interface Seo {
   metaKeywords: string[]
 }
 
+interface Range {
+  key: string
+  from: number
+  to?: number
+}
+
 export interface ProductItem {
   skuId: string
   name: string
@@ -187,11 +193,7 @@ export interface RangeAggregationSource extends BaseAggregationSource {
   aggregation: {
     range: {
       field: string
-      ranges?: {
-        key: string
-        from: number
-        to?: number
-      }[]
+      ranges: Range[]
     }
   }
   metadata: {
