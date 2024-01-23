@@ -89,28 +89,25 @@ const buildFilter = (filter: AggregationSource, buckets?: string[]) => {
 
     case 'range': {
       const rangeFilter = filter as RangeAggregationSource
+
+      if (!buckets || buckets.length === 0) {
+        return null
+      }
+
+      const selectedRanges = rangeFilter.aggregation.range.ranges.filter((range) =>
+        buckets.includes(range.key)
+      )
+
       return {
         bool: {
-          should: Object.entries(rangeFilter.aggregation.range.ranges || {}).map(
-            ([rangeKey, rangeValues]) => {
-              const rangeObj: {
-                [key: string]: { key: string; from: number; to?: number }
-              } = {}
-
-              rangeObj[rangeKey] = {
-                key: rangeValues.key,
-                from: rangeValues.from,
-              }
-
-              if (rangeValues.to !== undefined) {
-                rangeObj[rangeKey].to = rangeValues.to
-              }
-
-              return {
-                range: rangeObj,
-              }
-            }
-          ),
+          should: selectedRanges.map((range) => ({
+            range: {
+              [rangeFilter.aggregation.range.field]: {
+                gte: range.from,
+                lte: range.to ?? undefined,
+              },
+            },
+          })),
         },
       }
     }

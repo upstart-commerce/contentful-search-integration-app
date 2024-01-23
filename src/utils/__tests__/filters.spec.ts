@@ -131,11 +131,16 @@ describe('buildFilters', () => {
                   key: '1 to 5',
                   to: 5.0,
                 },
+                {
+                  from: 4.0,
+                  key: '4 to 5',
+                  to: 5.0,
+                },
               ],
             },
           },
         },
-        buckets: ['0', '100'],
+        buckets: ['2 and UP', '4 to 5'],
       },
     }
 
@@ -197,18 +202,17 @@ describe('buildFilters', () => {
           should: [
             {
               range: {
-                0: {
-                  key: '2 and UP',
-                  from: 2.0,
+                __RANGE_FACET_FIELD__: {
+                  gte: 2.0,
+                  lte: undefined,
                 },
               },
             },
             {
               range: {
-                1: {
-                  key: '1 to 5',
-                  from: 1.0,
-                  to: 5.0,
+                __RANGE_FACET_FIELD__: {
+                  gte: 4.0,
+                  lte: 5.0,
                 },
               },
             },
