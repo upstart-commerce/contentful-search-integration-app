@@ -14,7 +14,7 @@ Upstart Commerce Contentful Search Integration App integrates with Upstart Comme
 
 ## Usage
 
-1. Install the application to your Contentful space using the following guide: [App installation](https://www.contentful.com/developers/docs/extensibility/app-framework/guide-install-app/)
+1. Install the application to your Contentful space using the following guide: [App installation](https://www.contentful.com/developers/docs/extensibility/app-framework/app-installation/)
 2. Configure the application by inserting your Upstart Commerce API credentials.
 3. Use the app to search for properties returned by the Upstart Commerce APIs.
 4. Select the properties you desire and save them to view the updated preview.
@@ -23,4 +23,4 @@ Upstart Commerce Contentful Search Integration App integrates with Upstart Comme
 
 ## Development
 
-For the development instructions, please refer to [Contentful App Framework - Local development](https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-documentation/#debugging-locally) documentation.
+For the development instructions, please refer to [Contentful App Framework - Local development](https://www.contentful.com/developers/docs/extensibility/app-framework/create-contentful-app/) documentation.
